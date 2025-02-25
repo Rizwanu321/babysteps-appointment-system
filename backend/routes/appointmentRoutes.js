@@ -15,13 +15,32 @@ router.get("/", async (req, res) => {
 router.post("/", async (req, res) => {
   try {
     const { doctorId, doctor, date, duration, ...appointmentData } = req.body;
+    const appointmentStart = new Date(date);
+    const appointmentEnd = addMinutes(appointmentStart, duration || 30);
 
     const conflictingAppointment = await Appointment.findOne({
       doctorId,
-      date: {
-        $lt: addMinutes(new Date(date), duration),
-        $gt: new Date(date),
-      },
+      $or: [
+        {
+          date: {
+            $lt: appointmentEnd,
+            $gte: appointmentStart,
+          },
+        },
+        {
+          $expr: {
+            $and: [
+              { $lt: ["$date", appointmentEnd] },
+              {
+                $gte: [
+                  { $add: ["$date", { $multiply: ["$duration", 60000] }] },
+                  appointmentStart,
+                ],
+              },
+            ],
+          },
+        },
+      ],
     });
 
     if (conflictingAppointment) {
@@ -44,7 +63,6 @@ router.post("/", async (req, res) => {
     res.status(400).json({ message: error.message });
   }
 });
-
 router.put("/:id", async (req, res) => {
   try {
     const { id } = req.params;
