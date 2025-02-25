@@ -24,7 +24,7 @@ function App() {
   const [notification, setNotification] = useState(null);
 
   useEffect(() => {
-    const newSocket = io("http://localhost:5000");
+    const newSocket = io("https://babysteps-appointment-system-7wlz.onrender.com");
     setSocket(newSocket);
 
     newSocket.on("appointment-booked", () => {
