@@ -8,6 +8,8 @@ const {
   format,
   startOfDay,
   endOfDay,
+  isSameMinute,
+  isWithinInterval,
 } = require("date-fns");
 
 router.get("/", async (req, res) => {
@@ -49,11 +51,20 @@ router.get("/:id/slots", async (req, res) => {
     while (currentSlot < endTime) {
       const slotEnd = addMinutes(currentSlot, 30);
 
-      const isAvailable = !existingAppointments.some(
-        (appt) => appt.date >= currentSlot && appt.date < slotEnd
-      );
+      const isSlotAvailable = !existingAppointments.some((appointment) => {
+        const appointmentStart = new Date(appointment.date);
+        const appointmentEnd = addMinutes(appointmentStart, appointment.duration);
 
-      if (isAvailable) {
+        return isWithinInterval(currentSlot, {
+          start: appointmentStart,
+          end: appointmentEnd,
+        }) || isWithinInterval(slotEnd, {
+          start: appointmentStart,
+          end: appointmentEnd,
+        });
+      });
+
+      if (isSlotAvailable && currentSlot > new Date()) {
         slots.push(format(currentSlot, "HH:mm"));
       }
 
