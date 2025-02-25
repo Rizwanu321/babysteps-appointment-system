@@ -3,7 +3,7 @@ const socketIo = require("socket.io");
 const socketManager = (server) => {
   const io = socketIo(server, {
     cors: {
-      origin: "http://localhost:3000",
+      origin: "https://babysteps-appointment-app.onrender.com",
       methods: ["GET", "POST", "PUT", "DELETE"],
     },
   });
