@@ -1,5 +1,5 @@
-export const API_BASE_URL = "http://localhost:5000/api";
-export const SOCKET_URL = "http://localhost:5000";
+export const API_BASE_URL = "https://babysteps-appointment-system-7wlz.onrender.com/api";
+export const SOCKET_URL = "https://babysteps-appointment-system-7wlz.onrender.com";
 
 export const APPOINTMENT_TYPES = [
   "Routine Check-Up",
